@@ -1,0 +1,5 @@
+from Cars import Create_Car, get_car_info
+
+Benz = Create_Car.Car("ff15", "Black")
+Benz.stop_engine()
+get_car_info.getinfo(Benz)
