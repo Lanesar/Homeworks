@@ -1,0 +1,10 @@
+class Car:
+    def __init__(self, model, color):
+        self.model = model
+        self.color = color
+
+    def start_engine(self):
+        print(f"{self.model},{self.color} engine started.")
+
+    def stop_engine(self):
+        print(f"{self.model},{self.color} engine stopped.")
