@@ -1,0 +1,2 @@
+def getinfo(T):
+    print(T.model, T.color)
