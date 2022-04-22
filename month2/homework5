@@ -1,0 +1,16 @@
+import re
+
+
+class ValidCarNumber:
+    def __init__(self, number):
+        self.number = number
+
+    def is_valid(self):
+        if re.search(r"0[0-9]KG([0-9]{3})(BMW|MRC|LXS)", self.number):
+            print('The number is valid.')
+        else:
+            print('Not a valid number')
+
+
+LXS = ValidCarNumber('02KG123LXS')
+LXS.is_valid()
