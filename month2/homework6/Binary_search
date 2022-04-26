@@ -1,0 +1,29 @@
+# Salima Serdalieva, group 17, homework 6
+def get_list() -> list:
+    return list(range(0, 1_000, 2))
+
+
+class Solution:
+
+    def __init__(self, list, target):
+        self.list = list
+        self.target = target
+
+    def find_target(self):
+        low = 0
+        high = len(self.list) - 1
+        mid = 0
+        while low <= high:
+            mid = (high + low) // 2
+            if self.list[mid] < self.target:
+                low = mid + 1
+            elif self.list[mid] > self.target:
+                high = mid - 1
+            else:
+                print(f'Index of target is: {mid}')
+                exit()
+        print('Not found.')
+
+
+Bin = Solution(get_list(), 1)
+Bin.find_target()
