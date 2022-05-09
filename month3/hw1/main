@@ -1,0 +1,80 @@
+from aiogram import types, Bot, Dispatcher
+from aiogram.utils import executor
+import logging
+from decouple import config
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
+
+Token = config("Token1")
+
+bot = Bot(Token)
+dp = Dispatcher(bot=bot)
+
+
+@dp.message_handler(commands=['start'])
+async def start(message: types.Message):
+    await message.reply(f"Hello, {message.from_user.full_name}")
+
+
+@dp.message_handler(commands=['meme', 'mem'])
+async def meme(message: types.Message):
+    with open('placeholder.jpg', 'rb') as photo:
+        await message.reply_photo(photo)
+
+
+@dp.message_handler(commands=['quiz'])
+async def quiz_1(message: types.Message):
+    markup = InlineKeyboardMarkup()
+    button_call_1 = InlineKeyboardButton("Next", callback_data="button_call_1")
+    markup.add(button_call_1)
+    question = "What is the speed of light?"
+    answer = ['3,123,945 m/s',
+              '299,452,378 m/s',
+              '299,792,458 m/s',
+              '0 m/s',
+              'No one knows.']
+    await bot.send_poll(
+        chat_id=message.from_user.id,
+        question=question,
+        options=answer,
+        is_anonymous=False,
+        type='quiz',
+        correct_option_id=2,
+        reply_markup=markup
+    )
+
+
+@dp.callback_query_handler(lambda call: call.data == "button_call_1")
+async def quiz_2(call: types.CallbackQuery):
+    markup = InlineKeyboardMarkup()
+    question = "What is the best color?"
+    answer = [
+        'Yellow',
+        'Teal',
+        'Red',
+        'Emerald',
+        'Purple'
+    ]
+    await bot.send_poll(
+        chat_id=call.from_user.id,
+        question=question,
+        options=answer,
+        is_anonymous=False,
+        type='quiz',
+        correct_option_id=1,
+        explanation="Teal IS the best color",
+        explanation_parse_mode=ParseMode.MARKDOWN_V2,
+        reply_markup=markup
+    )
+
+
+@dp.message_handler()
+async def echo(message: types.Message):
+    try:
+        await message.answer(int(message.text) ** 2)
+    except:
+        await message.answer(message.text)
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    executor.start_polling(dp, skip_updates=True)
