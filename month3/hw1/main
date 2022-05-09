@@ -17,7 +17,7 @@ async def start(message: types.Message):
 
 @dp.message_handler(commands=['meme', 'mem'])
 async def meme(message: types.Message):
-    with open('placeholder.jpg', 'rb') as photo:
+    with open('Placeholder.jpg', 'rb') as photo:
         await message.reply_photo(photo)
 
 
