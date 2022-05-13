@@ -1,0 +1,8 @@
+from aiogram import Bot, Dispatcher
+
+Token2 = '5264579529:AAHVuktzYwgoTn1lNRkkcmlOSoCZYFtAk1E'
+
+bot = Bot(Token2)
+dp = Dispatcher(bot=bot)
+
+ADMIN = 5296495923
