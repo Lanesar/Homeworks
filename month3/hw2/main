@@ -1,0 +1,163 @@
+from aiogram import types, Bot, Dispatcher
+from aiogram.utils import executor
+import logging
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
+import random
+from config import ADMIN, Token2
+
+Token = Token2
+
+bot = Bot(Token)
+dp = Dispatcher(bot=bot)
+
+
+@dp.message_handler(commands=['start'])
+async def start(message: types.Message):
+    await message.reply(f"Hello, {message.from_user.full_name}")
+
+
+@dp.message_handler(commands=['quiz'])
+async def quiz_1(message: types.Message):
+    markup = InlineKeyboardMarkup()
+    button_call_1 = InlineKeyboardButton("Next", callback_data="button_call_1")
+    markup.add(button_call_1)
+    question = "What is the speed of light?"
+    answer = ['3,123,945 m/s',
+              '299,452,378 m/s',
+              '299,792,458 m/s',
+              '0 m/s',
+              'No one knows.']
+    await bot.send_poll(
+        chat_id=message.from_user.id,
+        question=question,
+        options=answer,
+        is_anonymous=False,
+        type='quiz',
+        correct_option_id=2,
+        reply_markup=markup
+    )
+
+
+@dp.callback_query_handler(lambda call: call.data == "button_call_1")
+async def quiz_2(call: types.CallbackQuery):
+    markup = InlineKeyboardMarkup()
+    button_call_2 = InlineKeyboardButton("Next", callback_data="button_call_2")
+    markup.add(button_call_2)
+    question = "What is the best color?"
+    answer = [
+        'Yellow',
+        'Teal',
+        'Red',
+        'Emerald',
+        'Purple'
+    ]
+    await bot.send_poll(
+        chat_id=call.from_user.id,
+        question=question,
+        options=answer,
+        is_anonymous=False,
+        type='quiz',
+        correct_option_id=1,
+        explanation="Teal IS the best color",
+        explanation_parse_mode=ParseMode.MARKDOWN_V2,
+        reply_markup=markup
+    )
+
+
+@dp.callback_query_handler(lambda call: call.data == "button_call_2")
+async def quiz_3(call: types.CallbackQuery):
+    markup = InlineKeyboardMarkup()
+    button_call_3 = InlineKeyboardButton("Next", callback_data="button_call_3")
+    markup.add(button_call_3)
+    question = "What is the speed of sound?"
+    answer = [
+        '343 m/s',
+        '249 m/s',
+        '1000 m/s',
+        '500 m/s',
+        'It depends on the air temperature and pressure'
+    ]
+    await bot.send_poll(
+        chat_id=call.from_user.id,
+        question=question,
+        options=answer,
+        is_anonymous=False,
+        type='quiz',
+        correct_option_id=4,
+        reply_markup=markup
+    )
+
+
+@dp.callback_query_handler(lambda call: call.data == "button_call_3")
+async def quiz_4(call: types.CallbackQuery):
+    markup = InlineKeyboardMarkup()
+    button_call_4 = InlineKeyboardButton("Next", callback_data="button_call_4")
+    markup.add(button_call_4)
+    question = "What question is this?"
+    answer = [
+        'Just a question',
+        'A good question',
+        'Fourth question',
+        'Who cares',
+        '459 km'
+    ]
+    await bot.send_poll(
+        chat_id=call.from_user.id,
+        question=question,
+        options=answer,
+        is_anonymous=False,
+        type='quiz',
+        correct_option_id=2,
+        explanation="Most of them are technically correct",
+        explanation_parse_mode=ParseMode.MARKDOWN_V2,
+        reply_markup=markup
+    )
+
+
+@dp.callback_query_handler(lambda call: call.data == "button_call_4")
+async def quiz_5(call: types.CallbackQuery):
+    markup = InlineKeyboardMarkup()
+    question = "Do mermaids exist?"
+    answer = [
+        'Yes, I am a mermaid',
+        'Coffee',
+        'Yes, I am a merman',
+        'Could you repeat the question',
+        'Yes'
+        ]
+    await bot.send_poll(
+        chat_id=call.from_user.id,
+        question=question,
+        options=answer,
+        is_anonymous=False,
+        type='quiz',
+        correct_option_id=1,
+        explanation="Coffee is the best",
+        explanation_parse_mode=ParseMode.MARKDOWN_V2,
+        reply_markup=markup
+    )
+
+
+@dp.message_handler()
+async def empty(message: types.Message):
+    list1 = ['⚽', '🏀', '🎲', '🎯', '🎳', '🎰']
+    if "!pin" in message.text.lower() and message.reply_to_message:
+        await bot.pin_chat_message(message.chat.id, message.message_id)
+    if message.text.startswith('game') and message.from_user.id == ADMIN:
+        await bot.send_dice(message.chat.id, emoji=random.choice(list1))
+    if "dice" in message.text.lower():
+        await bot.send_message(message.chat.id, "Your roll:")
+        a = await bot.send_dice(message.chat.id, emoji='🎲')
+        await bot.send_message(message.chat.id, "My roll:")
+        b = await bot.send_dice(message.chat.id, emoji='🎲')
+        if a["dice"]["value"] > b["dice"]["value"]:
+            await bot.send_message(message.chat.id, 'You win!')
+        elif a["dice"]["value"] < b["dice"]["value"]:
+            await bot.send_message(message.chat.id, 'I win!')
+        else:
+            await bot.send_message(message.chat.id, "It's a draw!")
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    executor.start_polling(dp, skip_updates=True)
